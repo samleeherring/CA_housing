@@ -33,3 +33,44 @@ edd_inc <- EDD_income %>% ## just 2022
   select(8,7,5,6) %>%
   arrange(population) %>% slice(1:58) %>% 
   arrange(county)
+
+## Cleaning data for the housing prices tables
+## First, I'll do the 2025 dataset in 2 sections: region & county
+
+by_region_2025 <- prices_2025 %>%
+  select(1:3,5,6) %>%
+  rename(region = `State/Region/County`,
+         apr25 = `Apr-25`,
+         mar25 = `Mar-25`,
+         apr24 = `Apr-24`,
+         type = 5) %>%
+  mutate(apr25 = as.numeric(gsub("[$,]", "", apr25)),
+         mar25 = as.numeric(gsub("[$,]", "", mar25)),
+         apr24 = as.numeric(gsub("[$,]", "", apr24))) %>%
+  slice(1:9) %>%
+  mutate(price = (apr25+mar25+apr24)/3) %>%
+  select(1,6)
+
+by_county_2025 <- prices_2025 %>%
+  select(1:3,5,6) %>%
+  rename(region = `State/Region/County`,
+         apr25 = `Apr-25`,
+         mar25 = `Mar-25`,
+         apr24 = `Apr-24`,
+         type = 5) %>%
+  mutate(apr25 = as.numeric(gsub("[$,]", "", apr25)),
+         mar25 = as.numeric(gsub("[$,]", "", mar25)),
+         apr24 = as.numeric(gsub("[$,]", "", apr24))) %>%
+  filter(type == 'county') %>%
+  mutate(price = (apr25+mar25+apr24)/3) %>%
+  select(1,6)
+
+## Now for the historical table, I could've cleaned this one better in Sheets,
+## mais c'est la vie 
+
+by_county_hist <- prices_hist %>%
+  pivot_longer(cols= 2:64, names_to = 'counties', values_to = 'prices') %>%
+  rename(mo_yr = `Mon-Yr`) %>%
+  mutate(prices = as.numeric(gsub("[$,]", "", prices)))
+## this is a loooong tibble (3,024 x 3), but it might look good on a graph??
+  
