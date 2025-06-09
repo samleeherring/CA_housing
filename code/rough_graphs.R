@@ -105,6 +105,7 @@ by_county_hist_2 %>%
   
   theme(
     plot.title = element_textbox_simple(margin = margin(b=5), size = 17),
+    plot.title.position = 'plot',
     plot.subtitle = element_text(color = '#2b2b2b', size = 10),
     panel.background = element_rect(fill = '#f6f6f6'),
     plot.background = element_rect(fill = '#f6f6f6'),
@@ -160,6 +161,7 @@ by_region_hist_2 %>%
   
   theme(
     plot.title = element_textbox_simple(margin = margin(b=5), size = 17),
+    plot.title.position = 'plot',
     plot.subtitle = element_text(color = '#2b2b2b', size = 10),
     panel.background = element_rect(fill = '#f6f6f6'),
     plot.background = element_rect(fill = '#f6f6f6'),
