@@ -19,7 +19,7 @@ nih_inc <- NIH_income %>% ## avg from 2019-2023
   select(1,3) %>%
   mutate(county = str_sub(County, 1, -8), ## don't want 'county' in name
          income = `Value (Dollars)`) %>%
-  select(3,4) %>% slice(3:58) %>% ## don't want total CA avg income
+  select(3,4) %>% slice(3:60) %>% ## don't want total CA avg income
   arrange(county)
 
 edd_inc <- EDD_income %>% ## just 2022

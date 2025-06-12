@@ -176,4 +176,73 @@ by_region_hist_2 %>%
   )
 ggsave('plots/trends_by_region_rough.png', width = 6, height = 5, units = 'in')
 
+## Taking a look at some of the income/population data
+edd_inc %>% arrange(-income)
+  ggplot(aes(y=county, x=income, fill=population)) +
+  #ggplot(aes(y=county, x=population, fill=income)) +
+  geom_col(show.legend = F, position = 'stack') +
+  scale_y_discrete(breaks = waiver()) +
+  scale_x_continuous(breaks = seq(30000, 180000, 30000),
+                     labels=c('30k', '60k', '90k','120k', '150k', '180k'),
+                     expand = c(0,0), limits = c(0,185000)) +
+  #scale_fill_gradient(low = 'red', high = '')+
+
+  labs(
+    title = "Median income in California by county (2022)",
+    x = "Income ($USD)",
+    y = NULL,
+    tag = 'Data: Employment Development Department'
+  ) +
+  
+  theme(
+    plot.title = element_textbox_simple(margin = margin(b=5), size = 15),
+    panel.background = element_rect(fill = '#f6f6f6'),
+    plot.margin = margin(10,5,10,5),
+    panel.spacing = unit(0.3, 'in'),
+    plot.tag = element_text(size = 9, color = 'darkgrey'),
+    plot.tag.position = 'bottomright',
+    plot.tag.location = 'plot',
+    axis.line = element_line(),
+  )
+
+nih_inc %>% 
+  ggplot(aes(y=county, x=income)) +
+  #ggplot(aes(y=county, x=population, fill=income)) +
+  geom_col(show.legend = F, position = 'stack') +
+  scale_y_discrete(breaks = waiver()) +
+  scale_x_continuous(breaks = seq(40000, 160000, 40000),
+                     labels=c('40k', '80k', '120k','160k'),
+                     expand = c(0,0), limits = c(0,165000)) +
+  #scale_fill_gradient(low = 'red', high = '')+
+  
+  labs(
+    title = "Median income in California by county (2019-2023)",
+    x = "Income ($USD)",
+    y = NULL,
+    tag = "Data: Nat'l Institue of Health"
+  ) +
+  
+  theme(
+    plot.title = element_textbox_simple(margin = margin(b=5), size = 15),
+    panel.background = element_rect(fill = '#f6f6f6'),
+    plot.margin = margin(10,5,10,5),
+    panel.spacing = unit(0.3, 'in'),
+    plot.tag = element_text(size = 9, color = 'darkgrey'),
+    plot.tag.position = 'bottomright',
+    plot.tag.location = 'plot',
+    axis.line = element_line(),
+  )
+## I think I'll go with this one because it shows an average throughout covid &
+## I like that better than the 2022 snapshot
+ggsave('plots/income_by_county_rough.png', width = 6, height = 7, units = 'in')
+
+## For when it's mappy time
+
+library(usmap)
+library(maps)
+library(glue)
+
+map('county', 'california', fill = TRUE, col = palette())
+
+us_map('california')
 
