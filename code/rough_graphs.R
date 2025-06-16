@@ -240,9 +240,68 @@ ggsave('plots/income_by_county_rough.png', width = 6, height = 7, units = 'in')
 
 library(usmap)
 library(maps)
+library(mapproj)
 library(glue)
 
 map('county', 'california', fill = TRUE, col = palette())
-
 us_map('california')
 
+nih_inc_2 <- nih_inc %>% mutate(county=tolower(county))
+
+## Income by county map test
+map_data(map='county', region='california') %>% 
+  #distint(subregions) checking for 58 counties
+  inner_join(., nih_inc_2, by = c('subregion'='county')) %>%
+  ggplot(aes(x=long, y=lat, group=group, fill=income)) +
+  geom_polygon(color='grey') +
+  scale_fill_continuous(name = 'Income Level',
+                        breaks = c(75000, 100000, 125000, 150000),
+                        labels=c('$75k', '$100k', '$125k', '$150k')) +
+  
+  labs(
+    title = 'Median income by county in California',
+    x = NULL,
+    y = NULL
+  ) +
+  
+  theme(
+    plot.title = element_textbox_simple(margin = margin(b=5), size = 20),
+    panel.background = element_rect(fill = '#f6f6f6'),
+    #plot.margin = margin(10,5,10,5),
+    #panel.spacing = unit(0.3, 'in'),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(.7, .8)
+  )
+## Good enough for a rough plot
+ggsave('plots/income_map_rough.png', width = 5, height = 6, units = 'in')
+
+
+map_data(map='county', region='california') %>% 
+  #distint(subregions) checking for 58 counties
+  inner_join(., nih_inc_2, by = c('subregion'='county')) %>%
+  ggplot(aes(x=long, y=lat, group=group, fill=income)) +
+  geom_polygon(color='grey') +
+  scale_fill_continuous(name = 'Income Level',
+                        breaks = c(75000, 100000, 125000, 150000),
+                        labels=c('$75k', '$100k', '$125k', '$150k')) +
+  
+  labs(
+    title = 'Median income by county in California',
+    x = NULL,
+    y = NULL
+  ) +
+  
+  theme(
+    plot.title = element_textbox_simple(margin = margin(b=5), size = 20),
+    panel.background = element_rect(fill = '#f6f6f6'),
+    #plot.margin = margin(10,5,10,5),
+    #panel.spacing = unit(0.3, 'in'),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(.7, .8)
+  )
+## Good enough for a rough plot
+ggsave('plots/income_map_rough.png', width = 5, height = 6, units = 'in')
