@@ -73,4 +73,19 @@ by_county_hist <- prices_hist %>%
   rename(mo_yr = `Mon-Yr`) %>%
   mutate(prices = as.numeric(gsub("[$,]", "", prices)))
 ## this is a loooong tibble (3,024 x 3), but it might look good on a graph??
-  
+ 
+## Need to figure out a disparity 
+##hmm <-
+by_county_hist_2 %>%
+  mutate(counties = tolower(counties)) %>%
+  filter(counties != 'ca') %>%
+  distinct(counties) %>%
+  anti_join(., nih_inc_2, by=c('counties'='county'))
+# ok so there's no hypen in the NIH tibble for contra costa
+
+nih_inc_2 %>%
+  anti_join(., hmm, by=c('county'='counties'))
+# and apparently the housing one is just missing 5 other counties??
+# alpine, colusa, inyo, modoc, and sierra
+# ok figured it out, those are counties containing state/fed lands/parks, so not may homes
+# college brain right here

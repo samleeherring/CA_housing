@@ -278,17 +278,32 @@ map_data(map='county', region='california') %>%
 ggsave('plots/income_map_rough.png', width = 5, height = 6, units = 'in')
 
 
+
+## Home prices map of CA by county
+by_county_hist_2 %>% distinct(counties) %>% print(n=56)
+
+## Checking to make sure all data is present
+by_county_hist_2 %>% mutate(counties = tolower(counties)) %>% filter(counties != 'ca') %>%
+  anti_join(., nih_inc_2, by = c('counties'='county')) %>%
+  print(n=50) # for some reason, Contra-Costa county is being omitted, back to cleaning
+
+county_3 <- by_county_hist_2 %>%
+  mutate(counties = tolower(counties)) %>%
+  filter(counties != 'ca') %>% #no need CA avg
+  mutate(counties = gsub("-", " ", counties)) #fixing contra-costa to work w/ dataset
+
+
 map_data(map='county', region='california') %>% 
   #distint(subregions) checking for 58 counties
-  inner_join(., nih_inc_2, by = c('subregion'='county')) %>%
-  ggplot(aes(x=long, y=lat, group=group, fill=income)) +
+  inner_join(., county_3, by = c('subregion'='counties')) %>%
+  ggplot(aes(x=long, y=lat, group=group, fill=prices)) +
   geom_polygon(color='grey') +
-  scale_fill_continuous(name = 'Income Level',
-                        breaks = c(75000, 100000, 125000, 150000),
-                        labels=c('$75k', '$100k', '$125k', '$150k')) +
+  scale_fill_continuous(name = 'Home Price',
+                        breaks = c(500000, 1000000, 1500000, 2000000),
+                        labels=c('$500k', '$1mil', '$1.5mil', '$2mil')) +
   
   labs(
-    title = 'Median income by county in California',
+    title = 'Median price of a single-family home by county in California',
     x = NULL,
     y = NULL
   ) +
@@ -304,4 +319,10 @@ map_data(map='county', region='california') %>%
     legend.position.inside = c(.7, .8)
   )
 ## Good enough for a rough plot
-ggsave('plots/income_map_rough.png', width = 5, height = 6, units = 'in')
+ggsave('plots/homes_map_rough.png', width = 5, height = 6, units = 'in')
+
+
+#Ok so I need to do this by year... or perhaps make a gif!
+county_3 %>% slice_max(prices)
+county_3 %>% slice_min(prices)
+
