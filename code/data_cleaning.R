@@ -89,3 +89,14 @@ nih_inc_2 %>%
 # alpine, colusa, inyo, modoc, and sierra
 # ok figured it out, those are counties containing state/fed lands/parks, so not may homes
 # college brain right here
+
+## Converting mo_yr column into <date> format
+county_4 <- county_3 %>%
+  mutate(mo_yr = gsub("-", "20", mo_yr),
+         mo_yr = paste0('15',mo_yr)) %>% # adding arbitrary day for formating
+  mutate(date = as.Date(mo_yr, "%d%B%Y")) %>%
+  select(4,2,3)
+
+x <- c("1jan1960", "2jan1960", "31mar1960", "30jul2021")
+z <- as.Date(x, "%d%b%Y")
+as.tibble(z)

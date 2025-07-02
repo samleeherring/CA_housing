@@ -326,3 +326,39 @@ ggsave('plots/homes_map_rough.png', width = 5, height = 6, units = 'in')
 county_3 %>% slice_max(prices)
 county_3 %>% slice_min(prices)
 
+library(gganimate)
+library(gifski)
+library(R.utils)
+
+map_dat <- map_data(map='county', region='california') %>% 
+  #distint(subregions) checking for 58 counties
+  inner_join(., county_4, by = c('subregion'='counties'))
+
+test <- map_dat %>%
+  ggplot(aes(x=long, y=lat, group=group, fill=prices)) +
+  geom_polygon(color='grey') +
+  scale_fill_continuous(name = 'Home Price',
+                        breaks = c(500000, 1000000, 1500000, 2000000),
+                        labels=c('$500k', '$1mil', '$1.5mil', '$2mil')) +
+  
+  labs(
+    title = 'Median price of a single-family home by county in California',
+    x = NULL,
+    y = NULL
+  ) +
+  
+  theme(
+    plot.title = element_textbox_simple(margin = margin(b=5), size = 20),
+    panel.background = element_rect(fill = '#f6f6f6'),
+    #plot.margin = margin(10,5,10,5),
+    #panel.spacing = unit(0.3, 'in'),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(.7, .8)
+  ) +
+  transition_manual(frames = date, cumulative = FALSE)
+
+animate(test, width=6, height=3.17, units="in", res = 300) 
+
+anim_save('figures/CA_housing_prices_gif.gif', animation = last_animation())
